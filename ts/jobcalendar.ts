@@ -3,9 +3,23 @@
  */
 
 class JobCalendar{
-    constructor(option:any){
+    constructor(dom:any,option:any){
+        ;
+    }
+
+    private countMonthOfyear(year:number){
+        return 12;
+    }
+
+    private countDayOfMonth(year:number, month:number){
+        var day = new Date(year,month,0);
+        return day.getDate();
+    }
+
+    private drawCalendar(){
         ;
     }
 }
 
-var cal = new JobCalendar(null);
+var dom = document.getElementsByClassName("jobcalendar")[0];
+var cal = new JobCalendar(dom,null);
