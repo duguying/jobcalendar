@@ -1,6 +1,109 @@
-.jobcalendar{
-  li{
+/*
+   变量设置
+*/
+$colors-bg:(
+        disabled:#fff,
+        hover:#f1f1f1,
+        cur:#69BC41,
+        active:#69BC41
+);
+$colors-font:(
+        disabled:#ccc,
+        hover:#fff,
+        cur:#fff,
+        active:#fff,
+        default:#666
+);
+$colors-border:(
+        default:#eee,
+);
+$calendar-height-lie-year:34px;
+$calendar-size-width:360px;
+$calendar-size-height:$calendar-height-lie-year * 6;
+$calendar-height-lie-month:($calendar-size-height - (20px + 15 * 4)) / 4;
+
+
+/*--------------------------
+全局样式
+-------*/
+body{
+  color:map-get($colors-font,default);
+  margin:100px;
+  font-size:14px;
+  font-family: 'Lato', 'Helvetica Neue', 'Microsoft YaHei',Arial, Helvetica, sans-serif;;
+}
+::-webkit-scrollbar {
+  position:absolute;
+  width: 5px;
+  height: 5px;
+  background-color: transparent;
+  -webkit-appearance: none;
+}
+::-webkit-scrollbar-thumb {
+  position:absolute;
+  height: 4px;
+  border-top: none;
+  border-bottom: none;
+  -webkit-border-radius: 6px;
+  background-color: rgba(0,0,0,.5);
+  background-clip: padding-box;
+}
+/*
+基础样式
+*/
+.calendar{
+  width:$calendar-size-width;
+  height:$calendar-size-height;
+  border:1px solid map-get($colors-border,default);
+  ul,li{
+    padding:0;
     list-style: none;
-    color: #000;
+    margin:0;
+  }
+  li{
+    cursor:pointer;
+    &:hover{
+      background-color:map-get($colors-bg,hover);
+    }
+  }
+  .cal-year{
+    overflow: hidden;
+    overflow-y:auto;
+    height:inherit;
+    display:inline-block;
+    width:-moz-calc(28% - 1px);
+    width:-webkit-calc(28% - 1px);
+    width:calc(28% - 1px);
+    text-align:center;
+    line-height:34px;
+    border-right:1px solid map-get($colors-border,default);
+  }
+  .cal-month{
+    width:-moz-calc(72% - 5px);
+    width:-webkit-calc(72% - 5px);
+    width:calc(72% - 5px);
+    display:inline-block;
+    height: inherit;
+    overflow:hidden;
+    ul{
+      margin:20px 0 0 15px;
+      li{
+        display:inline-block;
+        margin-bottom:15px;
+        margin-right:10px;
+        width:calc(33% - 15px);
+        text-align:center;
+        line-height:$calendar-height-lie-month;
+      }
+    }
+  }
+  .active,.active:hover{
+    background-color:map-get($colors-bg,active);
+    color:map-get($colors-font,active);
+  }
+  .disabled,.disabled:hover,.disabled:active,.disabled:visited{
+    color:map-get($colors-font,disabled);
+    background:none;
+    cursor:default;
   }
 }
