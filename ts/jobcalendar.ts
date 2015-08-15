@@ -36,6 +36,7 @@ class JobCalendar {
 
     private selectYear:number = null;
     private selectMonth:number = null;
+    private isToNow:boolean = false;
 
     constructor() {
         this.createYearUl();
@@ -72,6 +73,15 @@ class JobCalendar {
     }
 
     private fillBackInput(){
+        if(this.isToNow){
+            if(this.lang == "zh-CN"){
+                this.currentFocusElement.value = this.cnToNow;
+            }else{
+                this.currentFocusElement.value = this.enToNow;
+            }
+            return;
+        }
+
         this.currentFocusElement.value = this.selectYear.toString() + "." + this.selectMonth.toString();
         for(var idx in this.bindElements){
             var ele:HTMLInputElement = this.bindElements[idx]["element"];
@@ -111,6 +121,7 @@ class JobCalendar {
                     _this.setActiveYear(year);
                     mark = 1;
                     _this.selectYear = year;
+                    _this.isToNow = false;
                     break;
                 };
             }
@@ -121,15 +132,26 @@ class JobCalendar {
                 if(ele == target){
                     console.log("you clicked month",idx);
                     mark = 2;
-                    var month:number = _this.getMonthNumber(ele.innerHTML.trim());
-                    _this.selectMonth = month;
 
-                    //console.log(_this.selectYear, _this.selectMonth);
-                    _this.fillBackInput();
-                    _this.hideCalendar();
+                    if(!_this.isActiveToNow()){
+                        var month:number = _this.getMonthNumber(ele.innerHTML.trim());
+                        _this.selectMonth = month;
+                        _this.setActiveMonth(month);
+                        _this.fillBackInput();
+                        _this.hideCalendar();
+                    }
 
-                    break;
+                    return;
                 }
+            }
+
+            // to now
+            if(target == _this.liToNow){
+                _this.isToNow = true;
+                _this.setActiveToNow();
+                _this.fillBackInput();
+                _this.hideCalendar();
+                return;
             }
 
             if((target==_this.currentFocusElement) || (target==_this.frameBox) ||
@@ -248,7 +270,25 @@ class JobCalendar {
         this.selectYear = this.nowDate.getUTCFullYear();
     }
 
+    private setActiveToNow(){
+        for(var idx in this.yearElements){
+            var ele:HTMLElement = this.yearElements[idx];
+            this.removeClass(ele, "active");
+        };
+        this.addClass(this.liToNow, "active");
+    }
+
+    private removeActiveToNow(){
+        this.removeClass(this.liToNow, "active");
+    }
+
+    private isActiveToNow():boolean{
+        var cls:string = this.liToNow.getAttribute("class");
+        return cls.indexOf("active") > 0;
+    }
+
     private setActiveYear(year:number){
+        this.removeActiveToNow();
         for(var idx in this.yearElements){
             var ele:HTMLElement = this.yearElements[idx];
             if(ele.innerHTML == year.toString()){
@@ -269,6 +309,17 @@ class JobCalendar {
             }
         };
         return null;
+    }
+
+    private setActiveMonth(month:number){
+        for(var idx in this.monthElements){
+            var ele:HTMLElement = this.monthElements[idx];
+            if(this.getMonthNumber(ele.innerHTML.trim()) == month){
+                this.addClass(ele, "active");
+            }else{
+                this.removeClass(ele, "active");
+            }
+        };
     }
 
     private clearYearElements(){
