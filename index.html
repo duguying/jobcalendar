@@ -7,9 +7,10 @@
 </head>
 <body>
     <div>
-        <input type="text" class="jobcalendar" />
+        <input type="text" class="jobcalendar" id="calendar1" />
     </div>
-
+    <input type="text" id="calendar2"/>
+    <!--
     <div class="calendar">
         <div class="cal-year">
             <ul>
@@ -43,5 +44,18 @@
             </ul>
         </div>
     </div>
+    -->
 </body>
+<script src="ts/jobcalendar.js"></script>
+<script>
+    var input1 = document.getElementById("calendar1");
+    var input2 = document.getElementById("calendar2");
+    var calendar = JobCalendar.getInstance({lang:"zh-CN",startYear:1990,endYear:2015});
+    calendar.addBindingElement(input1,function(){
+        console.log("here is callback function for calendar1");
+    });
+    calendar.addBindingElement(input2, function () {
+        console.log("here is callback function for calendar2")
+    })
+</script>
 </html>

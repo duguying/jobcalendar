@@ -1,5 +1,5 @@
 /*
-   变量设置
+   鍙橀噺璁剧疆
 */
 $colors-bg:(
         disabled:#fff,
@@ -24,7 +24,7 @@ $calendar-height-lie-month:($calendar-size-height - (20px + 15 * 4)) / 4;
 
 
 /*--------------------------
-全局样式
+鍏ㄥ眬鏍峰紡
 -------*/
 body{
   color:map-get($colors-font,default);
@@ -49,7 +49,7 @@ body{
   background-clip: padding-box;
 }
 /*
-基础样式
+鍩虹鏍峰紡
 */
 .calendar{
   width:$calendar-size-width;
