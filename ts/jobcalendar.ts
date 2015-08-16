@@ -104,6 +104,44 @@ class JobCalendar {
         }
     }
 
+    /**
+     * 根据 input 中的内容初始化 active 选中状态
+     */
+    private activeFromInputValue(){
+        var val:string = this.currentFocusElement.value;
+        if(val){
+            var toNow:string = this.cnToNow;
+            if(this.lang == "en-US"){
+                toNow = this.enToNow;
+            }
+
+            if(val.trim() == toNow){
+                this.isToNow = true;
+                this.setActiveToNow();
+            }else{
+                var year:number;
+                var month:number;
+                var arr:string[] = [];
+                arr = val.trim().split(".");
+                if(arr.length>=2){
+                    year = parseInt(arr[0]);
+                    month = parseInt(arr[1]);
+                    if(year*100+month>=this.enableStart && year*100+month<=this.enableEnd){
+                        if(year>=1000 && year<=9999){
+                            this.selectYear = year;
+                            this.setActiveYear(year);
+                        }
+                        if(month>=1 && month<=12){
+                            this.selectMonth = month;
+                            this.setActiveMonth(month);
+                        }
+                    }
+                }
+                this.isToNow = false;
+            }
+        }
+    }
+
     private bindInputFocus(ele:HTMLElement){
         var _this:JobCalendar = this;
         if(this.bindElements.length <= 0){
@@ -114,6 +152,8 @@ class JobCalendar {
             if(this.bindElements[idx]["element"] == ele){
                 this.bindElements[idx]["focus"] = function (e) {
                     _this.currentFocusElement = e.target;
+                    // initial input value data into active
+                    _this.activeFromInputValue();
                     _this.showCalendar();
                 };
                 this.bindElements[idx]["element"].addEventListener("focus", this.bindElements[idx]["focus"]);
