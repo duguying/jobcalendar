@@ -136,7 +136,7 @@ class JobCalendar {
             for(var idx in _this.monthElements){
                 var ele:HTMLElement = _this.monthElements[idx];
                 if(ele == target){
-                    console.log("you clicked month",idx);
+                    //console.log("you clicked month",idx);
                     mark = 2;
 
                     if(!_this.isActiveToNow()){
@@ -256,16 +256,6 @@ class JobCalendar {
             this.monthElements.push(liMonth);
             this.ulMonth.appendChild(liMonth);
         }
-
-
-        //if(this.selectYear == Math.floor(this.enableStart/100)){
-        //    for(var i:number = 0; i < this.enableStart%100; i++){
-        //        ;
-        //    }
-        //}
-        //if(this.selectYear == Math.floor(this.enableEnd/100)){
-        //    ;
-        //}
     }
 
     private updateYearli(){
@@ -383,6 +373,9 @@ class JobCalendar {
                 }
             };
             if(option.startYear && option.endYear){
+                if(option.startYear<1000 || option.endYear>9999){
+                    throw Error("year should be YYYY");
+                }
                 if(option.startYear > option.endYear){
                     throw Error("param should be `startYear` < `endYear`");
                 }else{
@@ -391,6 +384,12 @@ class JobCalendar {
                 }
             }
             if(option.startEnabled && option.endEnabled){
+                if(option.startEnabled<100000 || option.endEnabled>999999){
+                    throw Error("year-month should be YYYYMM");
+                }
+                if(!(option.startEnabled%100>0 && option.startEnabled%100<13 && option.endEnabled%100>0 && option.endEnabled%100<13)){
+                    throw Error("illegal month, range 1-12");
+                }
                 if(option.startEnabled > option.endEnabled){
                     throw Error("param should be `startEnabled` < `endEnabled`");
                 }else{
