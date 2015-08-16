@@ -26,7 +26,7 @@ class JobCalendar {
     private nowDate:Date = new Date();
 
     // options
-    private lang = "zh-CN";
+    private lang = this.getSysLang();
     private startYear:number = 1970; // 日历范围 - 起始年
     private endYear:number = this.nowDate.getUTCFullYear(); // 日历范围 - 结束年
     private enableStart:number = 197001; // 有效开始年月
@@ -70,9 +70,18 @@ class JobCalendar {
     }
 
     public addBindingElement(ele:HTMLInputElement, callback:Function){
-        //debugger;
         this.bindElements.push({"element":ele, "callback":callback, "focus":null});
         this.bindInputFocus(ele);
+    }
+
+    public removeBindingElement(ele:HTMLInputElement){
+        for (var idx in this.bindElements){
+            if(this.bindElements[idx]["element"] == ele){
+                this.bindElements[idx]["callback"] = null;
+                ele.removeEventListener("focus",this.bindElements[idx]["focus"]);
+                delete this.bindElements[idx];
+            };
+        }
     }
 
     private fillBackInput(){
@@ -495,6 +504,18 @@ class JobCalendar {
             element.removeNode();
         }else{
             element.outerHTML = "";
+        }
+    }
+
+    /**
+     * 获取系统语言
+     * @returns {string}
+     */
+    private getSysLang():string{
+        if(navigator.language.indexOf("en") >= 0){
+            return "en-US";
+        }else{
+            return "zh-CN";
         }
     }
 }
