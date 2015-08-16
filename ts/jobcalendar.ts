@@ -29,10 +29,8 @@ class JobCalendar {
     private lang = "zh-CN";
     private startYear:number = 1970; // 日历范围 - 起始年
     private endYear:number = this.nowDate.getUTCFullYear(); // 日历范围 - 结束年
-    private enableStartYear:number = 1970; // 有效开始年
-    private enableEndYear:number = this.nowDate.getUTCFullYear(); // 有效结束年
-    private enableStartMonth:number = 1; // 有效开始月
-    private enableEndMonth:number = this.nowDate.getUTCMonth() + 1; // 有效结束月
+    private enableStart:number = 197001; // 有效开始年月
+    private enableEnd:number = this.nowDate.getUTCFullYear() * 100 + (this.nowDate.getUTCMonth() + 1); // 有效结束年月
 
     private selectYear:number = null;
     private selectMonth:number = null;
@@ -44,12 +42,17 @@ class JobCalendar {
         this.createFrameBox();
     }
 
-    public static getInstance(option:{lang:string; startYear:number; endYear:number; startEnabledYear:number; startEnabledMonth:number; endEnabledYear:number; endEnabledMonth:number}):JobCalendar{
+    public static getInstance():JobCalendar{
         if(!JobCalendar.ME){
             JobCalendar.ME = new JobCalendar();
         }
-        JobCalendar.ME.update(option);
         return JobCalendar.ME;
+    }
+
+    public updateOption(option:{lang:string;
+            startYear:number; endYear:number;
+            startEnabled:number; endEnabled:number}){
+        JobCalendar.ME.update(option);
     }
 
     private getMonthNumber(month:string):number{
@@ -103,7 +106,7 @@ class JobCalendar {
                 this.bindElements[idx]["focus"] = function (e) {
                     _this.currentFocusElement = e.target;
                     _this.showCalendar();
-                }
+                };
                 this.bindElements[idx]["element"].addEventListener("focus", this.bindElements[idx]["focus"]);
             }
         }
@@ -116,12 +119,15 @@ class JobCalendar {
             for(var idx in _this.yearElements){
                 var ele:HTMLElement = _this.yearElements[idx];
                 if(ele == target){
-                    console.log("you clicked year",idx);
                     var year:number = parseInt(ele.innerHTML);
-                    _this.setActiveYear(year);
                     mark = 1;
-                    _this.selectYear = year;
-                    _this.isToNow = false;
+                    if(!_this.hasClass(ele, "disabled")){
+                        _this.setActiveYear(year);
+                        _this.selectYear = year;
+                        _this.isToNow = false;
+                        _this.clearMonthElements();
+                        _this.updateMonthli();
+                    }
                     break;
                 };
             }
@@ -135,10 +141,12 @@ class JobCalendar {
 
                     if(!_this.isActiveToNow()){
                         var month:number = _this.getMonthNumber(ele.innerHTML.trim());
-                        _this.selectMonth = month;
-                        _this.setActiveMonth(month);
-                        _this.fillBackInput();
-                        _this.hideCalendar();
+                        if(!_this.hasClass(ele, "disabled")) {
+                            _this.setActiveMonth(month);
+                            _this.selectMonth = month;
+                            _this.fillBackInput();
+                            _this.hideCalendar();
+                        }
                     }
 
                     return;
@@ -232,14 +240,37 @@ class JobCalendar {
             }else{
                 liMonth.innerHTML = this.cnMonth[i];
             }
+
+            if(this.selectYear == Math.floor(this.enableStart/100)){
+                if(i<this.enableStart%100-1){
+                    this.addClass(liMonth, "disabled");
+                }
+            }
+
+            if(this.selectYear == Math.floor(this.enableEnd/100)){
+                if(i>this.enableEnd%100-1){
+                    this.addClass(liMonth, "disabled");
+                }
+            }
+
             this.monthElements.push(liMonth);
             this.ulMonth.appendChild(liMonth);
         }
+
+
+        //if(this.selectYear == Math.floor(this.enableStart/100)){
+        //    for(var i:number = 0; i < this.enableStart%100; i++){
+        //        ;
+        //    }
+        //}
+        //if(this.selectYear == Math.floor(this.enableEnd/100)){
+        //    ;
+        //}
     }
 
     private updateYearli(){
         var period:number = this.endYear - this.startYear;
-        var periodEnable = this.enableEndYear - this.enableStartYear;
+        var periodEnable = this.enableEnd - this.enableStart;
 
         if(period < 0){
             throw Error("please make sure `start<end`");
@@ -260,14 +291,22 @@ class JobCalendar {
         for(var i:number = 0; i <= period; i++){
             var liYear = document.createElement("li");
             liYear.innerHTML = (this.startYear + i).toString();
-            if(this.startYear + i < this.enableStartYear || this.startYear + i > this.enableEndYear){
+            if(this.startYear + i < Math.floor(this.enableStart/100) || this.startYear + i > Math.floor(this.enableEnd/100)){
                 this.addClass(liYear, "disabled")
             }
             this.yearElements.push(liYear);
             this.ulYear.appendChild(liYear);
         }
-        this.setActiveYear(this.nowDate.getUTCFullYear());
-        this.selectYear = this.nowDate.getUTCFullYear();
+
+        var initActiveYear:number = this.nowDate.getUTCFullYear();
+        if(Math.floor(this.enableStart/100)>this.nowDate.getUTCFullYear()){
+            initActiveYear = Math.floor(this.enableStart/100);
+        }
+        if(Math.floor(this.enableEnd/100) < this.nowDate.getUTCFullYear()){
+            initActiveYear = Math.floor(this.enableEnd/100);
+        }
+        this.setActiveYear(initActiveYear);
+        this.selectYear = initActiveYear;
     }
 
     private setActiveToNow(){
@@ -332,7 +371,9 @@ class JobCalendar {
         this.monthElements = [];
     }
 
-    private update(option:{lang:string; startYear:number; endYear:number; startEnabledYear:number; startEnabledMonth:number; endEnabledYear:number; endEnabledMonth:number}){
+    private update(option:{lang:string;
+            startYear:number; endYear:number;
+            startEnabled:number; endEnabled:number}){
         if(option){
             if(option.lang){
                 if(option.lang == "en-US"){
@@ -349,20 +390,12 @@ class JobCalendar {
                     this.endYear = option.endYear;
                 }
             }
-            if(option.startEnabledYear && option.endEnabledYear){
-                if(option.startEnabledYear > option.endEnabledYear){
-                    throw Error("param should be `startEnabledYear` < `endEnabledYear`");
+            if(option.startEnabled && option.endEnabled){
+                if(option.startEnabled > option.endEnabled){
+                    throw Error("param should be `startEnabled` < `endEnabled`");
                 }else{
-                    this.enableStartYear = option.startEnabledYear;
-                    this.enableEndYear = option.endEnabledYear;
-                }
-            }
-            if(option.startEnabledMonth && option.endEnabledMonth){
-                if(option.startEnabledMonth > option.endEnabledMonth){
-                    throw Error("param should be `startEnabledMonth` < `endEnabledMonth`");
-                }else{
-                    this.enableStartMonth = option.startEnabledMonth;
-                    this.enableEndMonth = option.endEnabledMonth;
+                    this.enableStart = option.startEnabled;
+                    this.enableEnd = option.endEnabled;
                 }
             }
         };
@@ -412,6 +445,23 @@ class JobCalendar {
         }
         new_class_name = new_class_name.trim();
         dom.className = new_class_name
+    }
+
+    /**
+     * 是否有某个class
+     * @param dom
+     * @param cls
+     */
+    private hasClass(dom:HTMLElement,cls:string):boolean{
+        var clses:string = "";
+        if(dom.className){
+            clses = dom.className;
+        }else{
+            if(dom.getAttribute("class")){
+                clses = dom.getAttribute("class");
+            }
+        }
+        return clses.indexOf(cls) >= 0;
     }
 
     /**
