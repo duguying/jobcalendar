@@ -52,7 +52,7 @@ class JobCalendar {
 
     private updateOptionFromAttr():void{
         var lang:string = this.currentFocusElement.getAttribute("data-lang");
-        lang = lang?lang.toString().trim():"";
+        lang = lang?lang.toString().trim():null;
 
         var hasToNowString:string = this.currentFocusElement.getAttribute("data-has-to-now");
         var hasToNow:boolean = hasToNowString?hasToNowString.toString().trim() == "true":false;
@@ -482,10 +482,10 @@ class JobCalendar {
                 }
             }
             if(!option.startEnabled){
-                option.startEnabled = option.startYear*100+1;
+                option.startEnabled = this.startYear*100+1;
             }
             if(!option.endEnabled){
-                option.endEnabled = option.endYear*100+12;
+                option.endEnabled = this.endYear*100+12;
             }
             if(option.startEnabled && option.endEnabled){
                 if(option.startEnabled<100000 || option.endEnabled>999999){
