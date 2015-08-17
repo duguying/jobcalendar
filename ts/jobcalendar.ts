@@ -340,7 +340,11 @@ class JobCalendar {
                 this.addClass(liYear, "disabled")
             }
             this.yearElements.push(liYear);
-            this.ulYear.appendChild(liYear);
+            if(i == 0){
+                this.ulYear.appendChild(liYear);
+            }else{
+                this.ulYear.insertBefore(liYear, this.ulYear.childNodes[1]);
+            }
         }
 
         var initActiveYear:number = this.nowDate.getUTCFullYear();
