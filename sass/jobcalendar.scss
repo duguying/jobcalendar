@@ -67,10 +67,12 @@ body{
     }
   }
   .cal-year{
+    float:left;
     overflow: hidden;
     overflow-y:auto;
     height:inherit;
     display:inline-block;
+    width:27%;
     width:-moz-calc(28% - 1px);
     width:-webkit-calc(28% - 1px);
     width:calc(28% - 1px);
@@ -79,18 +81,23 @@ body{
     border-right:1px solid map-get($colors-border,default);
   }
   .cal-month{
-    width:-moz-calc(72% - 5px);
-    width:-webkit-calc(72% - 5px);
-    width:calc(72% - 5px);
+    width:72%;
+    width:-moz-calc(73% - 5px);
+    width:-webkit-calc(73% - 5px);
+    width:calc(73% - 5px);
     display:inline-block;
     height: inherit;
     overflow:hidden;
+    float:left;
     ul{
       margin:20px 0 0 15px;
       li{
         display:inline-block;
         margin-bottom:15px;
         margin-right:10px;
+        width:29%;
+        width:-moz-calc(33% - 15px);
+        width:-webkit-calc(33% - 15px);
         width:calc(33% - 15px);
         text-align:center;
         line-height:$calendar-height-lie-month;
