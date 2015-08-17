@@ -7,9 +7,11 @@
 </head>
 <body>
     <div>
-        <input type="text" class="jobcalendar" id="calendar1" />
+        <input type="text" class="jobcalendar" id="calendar1"
+               data-lang="zh-CN" data-has-to-now="false" data-start-year="1990" data-end-year="2015" />
     </div>
-    <input type="text" id="calendar2"/>
+    <input type="text" id="calendar2"
+           data-lang="en-US" data-has-to-now="true" data-start-year="1990" data-end-year="2015" />
 </body>
 <script src="ts/jobcalendar.js"></script>
 <script>
@@ -20,12 +22,13 @@
 
     calendar.addBindingElement(input1,function(){
         console.log("here is callback function for calendar1");
+        input2.setAttribute("data-start-enabled",input1.value);
     });
 
     calendar.addBindingElement(input2, function () {
         console.log("here is callback function for calendar2")
     })
 
-    calendar.removeBindingElement(input2);
+//    calendar.removeBindingElement(input2);
 </script>
 </html>
