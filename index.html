@@ -16,7 +16,7 @@
     var input1 = document.getElementById("calendar1");
     var input2 = document.getElementById("calendar2");
     var calendar = JobCalendar.getInstance();
-    calendar.updateOption({lang:"zh-CN",startYear:1990,endYear:2015, startEnabled:199504, endEnabled:200011});
+    calendar.updateOption({lang:"zh-CN",hasToNow:true,startYear:1990,endYear:2015, startEnabled:199504, endEnabled:200011});
 
     calendar.addBindingElement(input1,function(){
         console.log("here is callback function for calendar1");

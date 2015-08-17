@@ -26,7 +26,8 @@ class JobCalendar {
     private nowDate:Date = new Date();
 
     // options
-    private lang = this.getSysLang();
+    private lang:string = this.getSysLang();
+    private hasToNow:boolean = false;
     private startYear:number = 1970; // 日历范围 - 起始年
     private endYear:number = this.nowDate.getUTCFullYear(); // 日历范围 - 结束年
     private enableStart:number = 197001; // 有效开始年月
@@ -49,7 +50,7 @@ class JobCalendar {
         return JobCalendar.ME;
     }
 
-    public updateOption(option:{lang:string;
+    public updateOption(option:{lang:string;hasToNow:boolean;
             startYear:number; endYear:number;
             startEnabled:number; endEnabled:number}){
         JobCalendar.ME.update(option);
@@ -116,13 +117,14 @@ class JobCalendar {
             }
 
             if(val.trim() == toNow){
-                this.isToNow = true;
-                this.setActiveToNow();
+                if(this.hasToNow) {
+                    this.isToNow = true;
+                    this.setActiveToNow();
+                }
             }else{
                 var year:number;
                 var month:number;
-                var arr:string[] = [];
-                arr = val.trim().split(".");
+                var arr:string[] = val.trim().split(".");
                 if(arr.length>=2){
                     year = parseInt(arr[0]);
                     month = parseInt(arr[1]);
@@ -319,14 +321,18 @@ class JobCalendar {
         }
 
         // add to now
-        this.liToNow = document.createElement("li");
-        if(this.lang == "en-US"){
-            this.liToNow.innerHTML = this.enToNow;
-        }else{
-            this.liToNow.innerHTML = this.cnToNow;
+        if(this.hasToNow) {
+            this.liToNow = document.createElement("li");
+            if (this.lang == "en-US") {
+                this.liToNow.innerHTML = this.enToNow;
+            } else {
+                this.liToNow.innerHTML = this.cnToNow;
+            }
+            this.addClass(this.liToNow, "tonow");
+            this.ulYear.appendChild(this.liToNow);
         }
-        this.addClass(this.liToNow, "tonow");
-        this.ulYear.appendChild(this.liToNow);
+
+        // add year
         for(var i:number = 0; i <= period; i++){
             var liYear = document.createElement("li");
             liYear.innerHTML = (this.startYear + i).toString();
@@ -361,12 +367,17 @@ class JobCalendar {
     }
 
     private isActiveToNow():boolean{
+        if(!this.hasToNow){
+            return false;
+        }
         var cls:string = this.liToNow.getAttribute("class");
         return cls.indexOf("active") > 0;
     }
 
     private setActiveYear(year:number){
-        this.removeActiveToNow();
+        if(this.hasToNow) {
+            this.removeActiveToNow();
+        }
         for(var idx in this.yearElements){
             var ele:HTMLElement = this.yearElements[idx];
             if(ele.innerHTML == year.toString()){
@@ -410,7 +421,7 @@ class JobCalendar {
         this.monthElements = [];
     }
 
-    private update(option:{lang:string;
+    private update(option:{lang:string;hasToNow:boolean;
             startYear:number; endYear:number;
             startEnabled:number; endEnabled:number}){
         if(option){
@@ -420,7 +431,8 @@ class JobCalendar {
                 }else{
                     this.lang = "zh-CN";
                 }
-            };
+            }
+            this.hasToNow = !!option.hasToNow;
             if(option.startYear && option.endYear){
                 if(option.startYear<1000 || option.endYear>9999){
                     throw Error("year should be YYYY");
