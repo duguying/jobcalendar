@@ -387,7 +387,7 @@ class JobCalendar {
             if(i == 0){
                 this.ulYear.appendChild(liYear);
             }else{
-                this.ulYear.insertBefore(liYear, this.ulYear.childNodes[1]);
+                this.ulYear.insertBefore(liYear, this.ulYear.childNodes[this.hasToNow?1:0]);
             }
         }
 
