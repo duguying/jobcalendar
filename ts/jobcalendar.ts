@@ -176,6 +176,15 @@ class JobCalendar {
         }
     }
 
+    private disabledFocusInput(){
+        this.currentFocusElement.disabled = true;
+        //this.currentFocusElement.style.backgroundColor = "#FFF";
+    }
+
+    private enabledFocusInput(){
+        this.currentFocusElement.disabled = false;
+    }
+
     private bindInputFocus(ele:HTMLElement){
         var _this:JobCalendar = this;
         if(this.bindElements.length <= 0){
@@ -187,8 +196,8 @@ class JobCalendar {
                 this.bindElements[idx]["focus"] = function (e) {
                     _this.currentFocusElement = e.target;
                     // initial input value data into active
-                    _this.activeFromInputValue();
                     _this.updateOptionFromAttr();
+                    _this.activeFromInputValue();
                     _this.showCalendar();
                 };
                 this.bindElements[idx]["element"].addEventListener("focus", this.bindElements[idx]["focus"]);
@@ -268,10 +277,12 @@ class JobCalendar {
         this.frameBox.style.top = box_top+"px";
         this.frameBox.style.display = "";
         this.frameBox.style.backgroundColor = "#fff";
+        this.disabledFocusInput();
     }
 
     private hideCalendar(){
         this.frameBox.style.display = "none";
+        this.enabledFocusInput();
     }
 
     private getElementLeft(element){
@@ -376,7 +387,7 @@ class JobCalendar {
             if(i == 0){
                 this.ulYear.appendChild(liYear);
             }else{
-                this.ulYear.insertBefore(liYear, this.ulYear.childNodes[1]);
+                this.ulYear.insertBefore(liYear, this.ulYear.childNodes[this.hasToNow?1:0]);
             }
         }
 
