@@ -196,8 +196,8 @@ class JobCalendar {
                 this.bindElements[idx]["focus"] = function (e) {
                     _this.currentFocusElement = e.target;
                     // initial input value data into active
-                    _this.activeFromInputValue();
                     _this.updateOptionFromAttr();
+                    _this.activeFromInputValue();
                     _this.showCalendar();
                 };
                 this.bindElements[idx]["element"].addEventListener("focus", this.bindElements[idx]["focus"]);
