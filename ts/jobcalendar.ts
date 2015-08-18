@@ -176,6 +176,15 @@ class JobCalendar {
         }
     }
 
+    private disabledFocusInput(){
+        this.currentFocusElement.disabled = true;
+        //this.currentFocusElement.style.backgroundColor = "#FFF";
+    }
+
+    private enabledFocusInput(){
+        this.currentFocusElement.disabled = false;
+    }
+
     private bindInputFocus(ele:HTMLElement){
         var _this:JobCalendar = this;
         if(this.bindElements.length <= 0){
@@ -268,10 +277,12 @@ class JobCalendar {
         this.frameBox.style.top = box_top+"px";
         this.frameBox.style.display = "";
         this.frameBox.style.backgroundColor = "#fff";
+        this.disabledFocusInput();
     }
 
     private hideCalendar(){
         this.frameBox.style.display = "none";
+        this.enabledFocusInput();
     }
 
     private getElementLeft(element){
