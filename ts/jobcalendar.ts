@@ -177,12 +177,13 @@ class JobCalendar {
     }
 
     private disabledFocusInput(){
-        this.currentFocusElement.disabled = true;
+        this.currentFocusElement.readOnly = true;
+        this.frameBox.focus();
         //this.currentFocusElement.style.backgroundColor = "#FFF";
     }
 
     private enabledFocusInput(){
-        this.currentFocusElement.disabled = false;
+        this.currentFocusElement.readOnly = false;
     }
 
     private bindInputFocus(ele:HTMLElement){
