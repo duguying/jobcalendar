@@ -131,7 +131,9 @@ class JobCalendar {
         for(var idx in this.bindElements){
             var ele:HTMLInputElement = this.bindElements[idx]["element"];
             if(ele == this.currentFocusElement){
-                this.bindElements[idx]["callback"]();
+                if(typeof(this.bindElements[idx]["callback"]) == "function"){
+                    this.bindElements[idx]["callback"]();
+                }
                 return;
             }
         }
