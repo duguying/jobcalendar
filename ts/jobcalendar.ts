@@ -50,9 +50,41 @@ class JobCalendar {
         return JobCalendar.ME;
     }
 
+    private updateOptionFromAttr():void{
+        var lang:string = this.currentFocusElement.getAttribute("data-lang");
+        lang = lang?lang.toString().trim():null;
+
+        var hasToNowString:string = this.currentFocusElement.getAttribute("data-has-to-now");
+        var hasToNow:boolean = hasToNowString?hasToNowString.toString().trim() == "true":false;
+
+        var startYearString:string = this.currentFocusElement.getAttribute("data-start-year");
+        var startYear:number = startYearString?parseInt(startYearString.toString().trim()):0;
+
+        var endYearString:string = this.currentFocusElement.getAttribute("data-end-year");
+        var endYear:number = endYearString?parseInt(endYearString.toString().trim()):0;
+
+        var startEnabledString:string = this.currentFocusElement.getAttribute("data-start-enabled");
+        if(startEnabledString && startEnabledString.indexOf(".")>=0){
+            var arr:string[] = startEnabledString.split(".");
+            var enabled = parseInt(arr[0])*100+parseInt(arr[1]);
+            startEnabledString = enabled.toString();
+        };
+        var startEnabled:number = startEnabledString?parseInt(startEnabledString.toString().trim()):0;
+
+        var endEnabledString:string = this.currentFocusElement.getAttribute("data-end-enabled");
+        if(endEnabledString && endEnabledString.indexOf(".")>=0){
+            var arr:string[] = endEnabledString.split(".");
+            var enabled = parseInt(arr[0])*100+parseInt(arr[1]);
+            endEnabledString = enabled.toString();
+        };
+        var endEnabled:number = endEnabledString?parseInt(endEnabledString.toString().trim()):0;
+
+        this.updateOption({lang:lang, hasToNow:hasToNow, startYear:startYear, endYear:endYear, startEnabled:startEnabled, endEnabled:endEnabled});
+    }
+
     public updateOption(option:{lang:string;hasToNow:boolean;
             startYear:number; endYear:number;
-            startEnabled:number; endEnabled:number}){
+            startEnabled:number; endEnabled:number}):void{
         JobCalendar.ME.update(option);
     }
 
@@ -156,6 +188,7 @@ class JobCalendar {
                     _this.currentFocusElement = e.target;
                     // initial input value data into active
                     _this.activeFromInputValue();
+                    _this.updateOptionFromAttr();
                     _this.showCalendar();
                 };
                 this.bindElements[idx]["element"].addEventListener("focus", this.bindElements[idx]["focus"]);
@@ -447,6 +480,12 @@ class JobCalendar {
                     this.startYear = option.startYear;
                     this.endYear = option.endYear;
                 }
+            }
+            if(!option.startEnabled){
+                option.startEnabled = this.startYear*100+1;
+            }
+            if(!option.endEnabled){
+                option.endEnabled = this.endYear*100+12;
             }
             if(option.startEnabled && option.endEnabled){
                 if(option.startEnabled<100000 || option.endEnabled>999999){
