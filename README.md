@@ -4,7 +4,7 @@ JobCalender是“开源中国人才汇”简历部分用到的年月选择器控
 
 ## 效果
 
-![demo](https://git.oschina.net/duguying2008/JobCalender/raw/master/shot.png)
+![demo](https://git.oschina.net/duguying2008/JobCalendar/raw/master/shot.png)
 
 ## 使用
 
