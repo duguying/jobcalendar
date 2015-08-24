@@ -56,6 +56,9 @@ class JobCalendar {
 
         var hasToNowString:string = this.currentFocusElement.getAttribute("data-has-to-now");
         var hasToNow:boolean = hasToNowString?hasToNowString.toString().trim() == "true":false;
+        if(!hasToNow){
+            this.isToNow = false;
+        }
 
         var startYearString:string = this.currentFocusElement.getAttribute("data-start-year");
         var startYear:number = startYearString?parseInt(startYearString.toString().trim()):0;
