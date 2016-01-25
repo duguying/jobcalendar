@@ -31,6 +31,12 @@ calendar.addBindingElement(input2);
 calendar.removeBindingElement(input2);
 ```
 
+## brownser support
+IE8+ (我已经支持了IE8，如果有人要我支持IE6，我一定会砍死他)
+safari
+firefox
+chrome
+
 ## License
 
 MIT License

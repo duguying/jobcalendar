@@ -1,7 +1,6 @@
 /**
  * Created by rex on 2015/7/27.
  */
-
 class JobCalendar {
     private static ME:JobCalendar = null;
 
@@ -52,19 +51,19 @@ class JobCalendar {
 
     private updateOptionFromAttr():void{
         var lang:string = this.currentFocusElement.getAttribute("data-lang");
-        lang = lang?lang.toString().trim():null;
+        lang = lang?this.trim(lang.toString()):null;
 
         var hasToNowString:string = this.currentFocusElement.getAttribute("data-has-to-now");
-        var hasToNow:boolean = hasToNowString?hasToNowString.toString().trim() == "true":false;
+        var hasToNow:boolean = hasToNowString?this.trim(hasToNowString.toString()) == "true":false;
         if(!hasToNow){
             this.isToNow = false;
         }
 
         var startYearString:string = this.currentFocusElement.getAttribute("data-start-year");
-        var startYear:number = startYearString?parseInt(startYearString.toString().trim()):0;
+        var startYear:number = startYearString?parseInt(this.trim(startYearString.toString())):0;
 
         var endYearString:string = this.currentFocusElement.getAttribute("data-end-year");
-        var endYear:number = endYearString?parseInt(endYearString.toString().trim()):0;
+        var endYear:number = endYearString?parseInt(this.trim(endYearString.toString())):0;
 
         var startEnabledString:string = this.currentFocusElement.getAttribute("data-start-enabled");
         if(startEnabledString && startEnabledString.indexOf(".")>=0){
@@ -72,7 +71,7 @@ class JobCalendar {
             var enabled = parseInt(arr[0])*100+parseInt(arr[1]);
             startEnabledString = enabled.toString();
         };
-        var startEnabled:number = startEnabledString?parseInt(startEnabledString.toString().trim()):0;
+        var startEnabled:number = startEnabledString?parseInt(this.trim(startEnabledString.toString())):0;
 
         var endEnabledString:string = this.currentFocusElement.getAttribute("data-end-enabled");
         if(endEnabledString && endEnabledString.indexOf(".")>=0){
@@ -80,7 +79,7 @@ class JobCalendar {
             var enabled = parseInt(arr[0])*100+parseInt(arr[1]);
             endEnabledString = enabled.toString();
         };
-        var endEnabled:number = endEnabledString?parseInt(endEnabledString.toString().trim()):0;
+        var endEnabled:number = endEnabledString?parseInt(this.trim(endEnabledString.toString())):0;
 
         this.updateOption({lang:lang, hasToNow:hasToNow, startYear:startYear, endYear:endYear, startEnabled:startEnabled, endEnabled:endEnabled});
     }
@@ -153,7 +152,7 @@ class JobCalendar {
                 toNow = this.enToNow;
             }
 
-            if(val.trim() == toNow){
+            if(this.trim(val) == toNow){
                 if(this.hasToNow) {
                     this.isToNow = true;
                     this.setActiveToNow();
@@ -161,7 +160,7 @@ class JobCalendar {
             }else{
                 var year:number;
                 var month:number;
-                var arr:string[] = val.trim().split(".");
+                var arr:string[] = this.trim(val).split(".");
                 if(arr.length>=2){
                     year = parseInt(arr[0]);
                     month = parseInt(arr[1]);
@@ -203,18 +202,22 @@ class JobCalendar {
         for(var idx in this.bindElements){
             if(this.bindElements[idx]["element"] == ele){
                 this.bindElements[idx]["focus"] = function (e) {
-                    _this.currentFocusElement = e.target;
+                    e = e||window.event;
+                    _this.currentFocusElement = e.target||e.srcElement;
                     // initial input value data into active
                     _this.updateOptionFromAttr();
                     _this.activeFromInputValue();
                     _this.showCalendar();
                 };
-                this.bindElements[idx]["element"].addEventListener("focus", this.bindElements[idx]["focus"]);
+
+                this.addEventListener(this.bindElements[idx]["element"], "focus", this.bindElements[idx]["focus"]);
             }
         }
 
-        document.body.addEventListener("click", function (e) {
-            var target = e.target;
+
+        this.addEventListener(document.body, "click", function (e) {
+            e = e||window.event;
+            var target = e.target||e.srcElement;
             var mark:number = 0;
 
             // year li elements
@@ -242,7 +245,7 @@ class JobCalendar {
                     mark = 2;
 
                     if(!_this.isActiveToNow()){
-                        var month:number = _this.getMonthNumber(ele.innerHTML.trim());
+                        var month:number = _this.getMonthNumber(_this.trim(ele.innerHTML));
                         if(!_this.hasClass(ele, "disabled")) {
                             _this.setActiveMonth(month);
                             _this.selectMonth = month;
@@ -460,7 +463,7 @@ class JobCalendar {
     private setActiveMonth(month:number){
         for(var idx in this.monthElements){
             var ele:HTMLElement = this.monthElements[idx];
-            if(this.getMonthNumber(ele.innerHTML.trim()) == month){
+            if(this.getMonthNumber(this.trim(ele.innerHTML)) == month){
                 this.addClass(ele, "active");
             }else{
                 this.removeClass(ele, "active");
@@ -546,7 +549,7 @@ class JobCalendar {
                 new_class_name = new_class_name + ele + " ";
             }
         }
-        new_class_name = new_class_name.trim();
+        new_class_name = this.trim(new_class_name);
         dom.className = new_class_name
     }
 
@@ -566,7 +569,7 @@ class JobCalendar {
                 new_class_name = new_class_name + ele + " ";
             }
         }
-        new_class_name = new_class_name.trim();
+        new_class_name = this.trim(new_class_name);
         dom.className = new_class_name
     }
 
@@ -627,10 +630,26 @@ class JobCalendar {
      * @returns {string}
      */
     private getSysLang():string{
-        if(navigator.language.indexOf("en") >= 0){
-            return "en-US";
+        if(navigator.language){
+            if (navigator.language.indexOf("en") >= 0) {
+                return "en-US";
+            } else {
+                return "zh-CN";
+            }
         }else{
             return "zh-CN";
+        }
+    }
+
+    private trim(content:string):string{
+        return content.replace(/^\s+|\s+$/g, '');
+    }
+
+    private addEventListener(element:any, event:string, handler:Function):void{
+        if (element.addEventListener) {
+            element.addEventListener(event, handler, false);
+        } else {
+            element.attachEvent("on"+event, handler);
         }
     }
 }
